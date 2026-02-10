@@ -136,7 +136,7 @@ https://github.com/priscihantarisoa-hub/garage-management
 
 ## 4. ZIP CONTENANT LES SOURCES
 
-**Fichier** : `garage_projet_rendu.zip` ✅
+**Fichier** : `garage_projet_rendu.zip` 
 
 **Commande utilisée** :
 ```bash
@@ -258,7 +258,7 @@ token: <token après login>
 
 ## 8. APK GÉNÉRÉ
 
-**⚠️ Note importante** : La génération de l'APK nécessite un compte Expo et EAS Build (service cloud).
+**z Note importante** : La génération de l'APK nécessite un compte Expo et EAS Build (service cloud).
 
 **Pour générer l'APK (30-60 minutes sur les serveurs Expo) :**
 
@@ -288,7 +288,7 @@ Puis scannez le QR code avec l'application Expo Go sur votre téléphone.
 
 ---
 
-## ✅ CHECKLIST FINALE
+##  CHECKLIST FINALE
 
 - [x] MCD
 - [x] Scénarios documentés
@@ -301,9 +301,4 @@ Puis scannez le QR code avec l'application Expo Go sur votre téléphone.
 
 ---
 
-## 📞 INFORMATIONS
 
-**Projet** : Garage Management System
-**Technologies** : Laravel, Vue.js, React Native, Godot, Docker
-**Auteurs** : Équipe de projet
-**Date** : 2024
