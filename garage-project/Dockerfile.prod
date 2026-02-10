@@ -1,0 +1,88 @@
+# Dockerfile pour environnement de production
+FROM php:8.1-fpm-alpine
+
+# Définir l'environnement
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV APP_URL=https://votre-domaine.com
+
+# Installer les dépendances système
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    curl \
+    git \
+    unzip \
+    libzip-dev \
+    zip \
+    icu-dev \
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libwebp-dev
+
+# Installer les extensions PHP
+RUN docker-php-ext-install \
+    pdo_mysql \
+    mysqli \
+    mbstring \
+    zip \
+    exif \
+    pcntl \
+    bcmath \
+    intl \
+    gd \
+    opcache \
+    sockets
+
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Configurer PHP pour la production
+RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory-limit.ini && \
+    echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "post_max_size=64M" > /usr/local/etc/php/conf.d/postmax.ini && \
+    echo "max_execution_time=300" > /usr/local/etc/php/conf.d/max-execution-time.ini && \
+    echo "date.timezone=UTC" > /usr/local/etc/php/conf.d/timezone.ini
+
+# Configurer OPcache pour la production
+RUN echo "opcache.enable=1" > /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.memory_consumption=256" >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.interned_strings_buffer=8" >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.max_accelerated_files=10000" >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.revalidate_freq=0" >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.save_comments=1" >> /usr/local/etc/php/conf.d/opcache.ini && \
+    echo "opcache.enable_file_override=0" >> /usr/local/etc/php/conf.d/opcache.ini
+
+# Créer le répertoire de l'application
+WORKDIR /var/www
+
+# Copier les fichiers de l'application
+COPY . .
+
+# Installer les dépendances Composer en production
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Copier la configuration de nginx
+COPY nginx.prod.conf /etc/nginx/nginx.conf
+
+# Copier la configuration de supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Donner les permissions appropriées
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# Optimiser l'application pour la production
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php artisan event:cache
+
+# Exposer les ports
+EXPOSE 80
+
+# Démarrer supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

@@ -1,0 +1,214 @@
+<?php $__env->startSection('title', 'Réparations - Garage Backoffice'); ?>
+<?php $__env->startSection('page-title', 'Gestion des Réparations'); ?>
+<?php $__env->startSection('page-description', '3 emplacements actifs + liste des réparations terminées'); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="max-w-7xl mx-auto py-6 px-4">
+    <!-- Messages flash -->
+    <?php if(session('success')): ?>
+        <div style="background-color: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981;" class="border px-4 py-3 rounded mb-4">
+            <?php echo e(session('success')); ?>
+
+        </div>
+    <?php endif; ?>
+
+    <?php if(session('error')): ?>
+        <div style="background-color: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444;" class="border px-4 py-3 rounded mb-4">
+            <?php echo e(session('error')); ?>
+
+        </div>
+    <?php endif; ?>
+
+    <!-- Section: Réparations Actives (3 slots) -->
+    <div class="mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold" style="color: #ffffff;">
+                <i class="fas fa-car-side mr-2" style="color: #54ACBF;"></i>
+                Réparations Actives
+            </h1>
+            <a href="<?php echo e(route('admin.repairs.create')); ?>" style="background-color: #54ACBF;" class="text-white px-4 py-2 rounded hover:opacity-90">
+                <i class="fas fa-plus mr-2"></i>Nouvelle réparation
+            </a>
+        </div>
+        
+        <p class="mb-4" style="color: #a0a0a0;">Maximum 3 voitures simultanément</p>
+
+        <?php if($activeRepairs->count() === 0): ?>
+            <div style="background-color: #1a2332;" class="rounded-lg shadow p-6 text-center">
+                <i class="fas fa-car text-gray-400 text-4xl mb-4"></i>
+                <p style="color: #a0a0a0;">Aucune réparation active</p>
+                <p style="color: #6a7a8a;" class="text-sm mt-2">Les 3 emplacements sont disponibles</p>
+            </div>
+        <?php else: ?>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <?php $__currentLoopData = $activeRepairs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $repair): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div style="background-color: #1a2332;" class="rounded-lg shadow-lg overflow-hidden">
+                        <!-- Header -->
+                        <div style="background-color: #54ACBF;" class="text-white p-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-semibold">
+                                    <?php echo e($repair->client->nom); ?> <?php echo e($repair->client->prenom); ?>
+
+                                </h3>
+                                <span style="background-color: white; color: #54ACBF;" class="px-3 py-1 rounded-full text-sm font-medium">
+                                    Slot <?php echo e($loop->index + 1); ?>/3
+                                </span>
+                            </div>
+                            <div class="mt-2 text-sm opacity-90">
+                                <?php echo e($repair->client->voiture_marque); ?> <?php echo e($repair->client->voiture_modele); ?>
+
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="p-4">
+                            <!-- Statut -->
+                            <div class="mb-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    <?php if($repair->statut === 'en_attente'): ?> <?php elseif($repair->statut === 'en_cours'): ?> text-white <?php endif; ?>"
+                                    <?php if($repair->statut === 'en_attente'): ?>style="background-color: rgba(250, 204, 21, 0.2); color: #fbbf24;"<?php elseif($repair->statut === 'en_cours'): ?>style="background-color: #54ACBF;"<?php endif; ?>>
+                                    <?php if($repair->statut === 'en_attente'): ?> En attente
+                                    <?php elseif($repair->statut === 'en_cours'): ?> En cours
+                                    <?php endif; ?>
+                                </span>
+                            </div>
+
+                            <!-- Intervention -->
+                            <div class="mb-4">
+                                <h4 class="text-sm font-medium mb-2" style="color: #ffffff;">Intervention</h4>
+                                <div style="background-color: #252f3f;" class="p-3 rounded">
+                                    <div class="flex justify-between items-center">
+                                        <span style="color: #ffffff;" class="text-sm font-medium"><?php echo e($repair->intervention->nom); ?></span>
+                                        <span class="text-sm font-bold" style="color: #54ACBF;">
+                                            <?php echo e(number_format($repair->montant_total, 0, ',', ' ')); ?> Ar
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex space-x-2">
+                                <?php if($repair->statut === 'en_attente'): ?>
+                                    <form action="<?php echo e(route('admin.repairs.update-status', $repair->id)); ?>" method="POST" class="flex-1">
+                                        <?php echo csrf_field(); ?>
+                                        <input type="hidden" name="status" value="en_cours">
+                                        <button type="submit" class="w-full text-white px-3 py-2 rounded text-sm hover:opacity-80" style="background-color: #fbbf24; color: #1a1a1a;">
+                                            <i class="fas fa-play mr-1"></i>Démarrer
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+
+                                <?php if($repair->statut === 'en_cours'): ?>
+                                    <form action="<?php echo e(route('admin.repairs.update-status', $repair->id)); ?>" method="POST" class="flex-1">
+                                        <?php echo csrf_field(); ?>
+                                        <input type="hidden" name="status" value="termine">
+                                        <button type="submit" class="w-full text-white px-3 py-2 rounded text-sm hover:opacity-80" style="background-color: #10b981;">
+                                            <i class="fas fa-check mr-1"></i>Terminer
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Dates -->
+                            <?php if($repair->debut_reparation || $repair->fin_reparation): ?>
+                                <div class="mt-3 text-xs border-t pt-2" style="border-color: #2d3f54; color: #a0a0a0;">
+                                    <?php if($repair->debut_reparation): ?>
+                                        <div>Début: <?php echo e($repair->debut_reparation->format('H:i')); ?></div>
+                                    <?php endif; ?>
+                                    <?php if($repair->fin_reparation): ?>
+                                        <div>Fin: <?php echo e($repair->fin_reparation->format('H:i')); ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+                <!-- Slots vides -->
+                <?php for($i = $activeRepairs->count(); $i < 3; $i++): ?>
+                    <div style="background-color: #1a2332; border-color: #2d3f54;" class="rounded-lg shadow-lg p-6 border-2 border-dashed">
+                        <div class="text-center">
+                            <i class="fas fa-plus-circle text-gray-400 text-4xl mb-4"></i>
+                            <p style="color: #a0a0a0;" class="font-medium">Slot <?php echo e($i + 1); ?> disponible</p>
+                            <p style="color: #6a7a8a;" class="text-sm mt-2">Emplacement libre</p>
+                        </div>
+                    </div>
+                <?php endfor; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Section: Réparations Terminées (liste) -->
+    <div>
+        <h2 class="text-xl font-bold mb-6" style="color: #ffffff;">
+            <i class="fas fa-check-circle mr-2" style="color: #10b981;"></i>
+            Réparations Terminées
+        </h2>
+
+        <?php if($completedRepairs->count() === 0): ?>
+            <div style="background-color: #1a2332;" class="rounded-lg shadow p-6 text-center">
+                <i class="fas fa-clipboard-check text-gray-400 text-4xl mb-4"></i>
+                <p style="color: #a0a0a0;">Aucune réparation terminée</p>
+            </div>
+        <?php else: ?>
+            <div style="background-color: #1a2332;" class="rounded-lg shadow overflow-hidden">
+                <table class="min-w-full divide-y" style="border-color: #2d3f54;">
+                    <thead style="background-color: #252f3f;">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium" style="color: #a0a0a0;" class="uppercase tracking-wider">
+                                Client
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium" style="color: #a0a0a0;" class="uppercase tracking-wider">
+                                Véhicule
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium" style="color: #a0a0a0;" class="uppercase tracking-wider">
+                                Intervention
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium" style="color: #a0a0a0;" class="uppercase tracking-wider">
+                                Total
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium" style="color: #a0a0a0;" class="uppercase tracking-wider">
+                                Date
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: #1a2332;" class="divide-y" style="border-color: #2d3f54;">
+                        <?php $__currentLoopData = $completedRepairs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $repair): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr style="background-color: #1a2332;">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div style="color: #ffffff;" class="text-sm font-medium">
+                                        <?php echo e($repair->client->nom); ?> <?php echo e($repair->client->prenom); ?>
+
+                                    </div>
+                                    <div style="color: #a0a0a0;" class="text-sm"><?php echo e($repair->client->email); ?></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div style="color: #ffffff;" class="text-sm">
+                                        <?php echo e($repair->client->voiture_marque); ?> <?php echo e($repair->client->voiture_modele); ?>
+
+                                    </div>
+                                    <div style="color: #a0a0a0;" class="text-sm"><?php echo e($repair->client->voiture_immatriculation); ?></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span style="color: #ffffff;" class="text-sm"><?php echo e($repair->intervention->nom); ?></span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-bold" style="color: #54ACBF;">
+                                        <?php echo e(number_format($repair->montant_total, 0, ',', ' ')); ?> Ar
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: #a0a0a0;">
+                                    <?php echo e($repair->updated_at->format('d/m/Y H:i')); ?>
+
+                                </td>
+                            </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/resources/views/admin/repairs/index.blade.php ENDPATH**/ ?>

@@ -1,0 +1,368 @@
+{
+	"info": {
+		"_postman_id": "garage-api-collection",
+		"name": "Garage API - Laravel REST API",
+		"description": "Collection pour tester l'API REST du projet Garage Laravel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "AUTHENTIFICATION",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Connexion d'un utilisateur"
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"telephone\": \"+261340000000\",\n    \"voiture_marque\": \"Toyota\",\n    \"voiture_modele\": \"Corolla\",\n    \"voiture_immatriculation\": \"1234ABC\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Inscription d'un nouvel utilisateur"
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "profile"]
+						},
+						"description": "Profil de l'utilisateur connecté"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Déconnexion"
+					},
+					"response": []
+				}
+			],
+			"description": "Routes d'authentification"
+		},
+		{
+			"name": "INTERVENTIONS (Public)",
+			"item": [
+				{
+					"name": "Liste toutes les interventions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/interventions",
+							"host": ["{{baseUrl}}"],
+							"path": ["interventions"]
+						},
+						"description": "Liste toutes les interventions"
+					},
+					"response": []
+				},
+				{
+					"name": "Liste les types d'interventions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/interventions/types",
+							"host": ["{{baseUrl}}"],
+							"path": ["interventions", "types"]
+						},
+						"description": "Liste les 8 types d'interventions"
+					},
+					"response": []
+				},
+				{
+					"name": "Intervention par ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/interventions/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["interventions", "1"]
+						},
+						"description": "Détails d'une intervention"
+					},
+					"response": []
+				}
+			],
+			"description": "Routes interventions (publiques)"
+		},
+		{
+			"name": "CLIENTS (Protected)",
+			"item": [
+				{
+					"name": "Liste les clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients"]
+						},
+						"description": "Liste paginée des clients"
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Nouveau Client\",\n    \"email\": \"client@example.com\",\n    \"telephone\": \"+261340000001\",\n    \"voiture_marque\": \"Honda\",\n    \"voiture_modele\": \"Civic\",\n    \"voiture_immatriculation\": \"5678DEF\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients"]
+						},
+						"description": "Créer un nouveau client"
+					},
+					"response": []
+				},
+				{
+					"name": "Historique réparations client",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients/1/repairs",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients", "1", "repairs"]
+						},
+						"description": "Historique des réparations d'un client"
+					},
+					"response": []
+				}
+			],
+			"description": "Routes clients (authentifié)"
+		},
+		{
+			"name": "REPAIRS (Protected)",
+			"item": [
+				{
+					"name": "Liste les réparations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/repairs",
+							"host": ["{{baseUrl}}"],
+							"path": ["repairs"]
+						},
+						"description": "Liste paginée des réparations"
+					},
+					"response": []
+				},
+				{
+					"name": "Réparations actives (max 3)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/repairs/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["repairs", "active"]
+						},
+						"description": "Réparations en cours (slots disponibles)"
+					},
+					"response": []
+				},
+				{
+					"name": "Créer une réparation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"client_id\": 1,\n    \"intervention_ids\": [1, 2],\n    \"slot\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/repairs",
+							"host": ["{{baseUrl}}"],
+							"path": ["repairs"]
+						},
+						"description": "Créer une nouvelle réparation"
+					},
+					"response": []
+				},
+				{
+					"name": "Mettre à jour le statut",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"statut\": \"en_cours\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/repairs/1/status",
+							"host": ["{{baseUrl}}"],
+							"path": ["repairs", "1", "status"]
+						},
+						"description": "Mettre à jour le statut d'une réparation"
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["stats"]
+						},
+						"description": "Statistiques du garage"
+					},
+					"response": []
+				}
+			],
+			"description": "Routes réparations (authentifié)"
+		},
+		{
+			"name": "PAYMENTS (Protected)",
+			"item": [
+				{
+					"name": "Effectuer un paiement",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"methode\": \"especes\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/payments/pay/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["payments", "pay", "1"]
+						},
+						"description": "Payer une réparation terminée"
+					},
+					"response": []
+				},
+				{
+					"name": "Liste les paiements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/payments",
+							"host": ["{{baseUrl}}"],
+							"path": ["payments"]
+						},
+						"description": "Liste des paiements"
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques paiements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/payments/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["payments", "stats"]
+						},
+						"description": "Statistiques des paiements"
+					},
+					"response": []
+				}
+			],
+			"description": "Routes paiements (authentifié)"
+		}
+	]
+}

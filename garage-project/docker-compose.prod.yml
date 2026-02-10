@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+        container_name: garage-app-prod
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./storage/app:/var/www/storage/app
+            - ./storage/logs:/var/www/storage/logs
+        ports:
+            - "80:80"
+        networks:
+            - garage-network-prod
+        depends_on:
+            - db
+            - redis
+        environment:
+            - APP_ENV=production
+            - APP_DEBUG=false
+            - APP_URL=https://votre-domaine.com
+            - CACHE_DRIVER=redis
+            - SESSION_DRIVER=redis
+            - QUEUE_CONNECTION=redis
+            - DB_HOST=db
+            - REDIS_HOST=redis
+
+    db:
+        image: mysql:8.0
+        container_name: garage-db-prod
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: garage_db
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+        volumes:
+            - dbdata_prod:/var/lib/mysql
+            - ./database/mysql:/docker-entrypoint-initdb.d
+        networks:
+            - garage-network-prod
+        command: --default-authentication-plugin=mysql_native_password
+
+    redis:
+        image: redis:7-alpine
+        container_name: garage-redis-prod
+        restart: unless-stopped
+        volumes:
+            - redisdata:/data
+        networks:
+            - garage-network-prod
+        command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+
+    # Optionnel: Load Balancer
+    nginx:
+        image: nginx:alpine
+        container_name: garage-nginx-proxy
+        restart: unless-stopped
+        ports:
+            - "443:443"
+            - "80:80"
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/ssl:/etc/nginx/ssl
+            - ./storage/logs/nginx:/var/log/nginx
+        networks:
+            - garage-network-prod
+        depends_on:
+            - app
+
+networks:
+    garage-network-prod:
+        driver: bridge
+
+volumes:
+    dbdata_prod:
+        driver: local
+    redisdata:
+        driver: local
