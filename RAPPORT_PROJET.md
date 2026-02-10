@@ -129,14 +129,7 @@ Voir fichier : `MCD.md`
 ## 3. LIEN GIT
 
 ```
-Pas de repo GIT créé. Le code est fourni en local.
-Pour créer un repo :
-cd garage-laravel
-git init
-git add .
-git commit -m "Initial commit - Garage Management System"
-git remote add origin <URL_DU_REPO>
-git push -u origin main
+https://github.com/priscihantarisoa-hub/garage-management
 ```
 
 ---
@@ -247,31 +240,51 @@ token: <token après login>
 
 ## 7. TODO LIST AVEC AFFECTATION MEMBRE
 
-| Tâche | Membre | Statut |
-|-------|--------|--------|
-| Analyse et MCD | Équipe | ✅ Terminé |
-| Backend Laravel API | Équipe | ✅ Terminé |
-| Frontend Vue.js | Équipe | ✅ Terminé |
-| Application Mobile | Équipe | ✅ Terminé |
-| Jeu Godot | Équipe | ✅ Terminé |
-| Documentation technique | Équipe | ✅ Terminé |
-| Tests Postman | Équipe | À faire |
-| APK généré | Équipe | À faire |
-| Présentation finale | Équipe | À faire |
+| # | Tâche | Membre | Statut |
+|---|-------|--------|--------|
+| 1 | Analyse et MCD | Équipe | ✅ Terminé |
+| 2 | Backend Laravel API | Équipe | ✅ Terminé |
+| 3 | Frontend Vue.js | Équipe | ✅ Terminé |
+| 4 | Application Mobile Expo | Équipe | ✅ Terminé |
+| 5 | Jeu Godot | Équipe | ✅ Terminé |
+| 6 | Documentation technique | Équipe | ✅ Terminé |
+| 7 | Tests API Postman | Équipe | ✅ Terminé |
+| 8 | APK généré | Priscilla | 🔄 En cours |
+| 9 | Présentation finale | Équipe | À faire |
+
+> **Note** : La todo list détaillée avec affectation par membre est disponible dans le fichier Excel du projet.
 
 ---
 
 ## 8. APK GÉNÉRÉ
 
-**Statut** : À générer
+**⚠️ Note importante** : La génération de l'APK nécessite un compte Expo et EAS Build (service cloud).
 
-**Commande** :
+**Pour générer l'APK (30-60 minutes sur les serveurs Expo) :**
+
 ```bash
 cd mobile
-npx expo build:android -t apk
+
+# 1. Se connecter à Expo (si pas déjà fait)
+npx expo login
+
+# 2. Configurer EAS (une fois)
+npx eas build:configure
+
+# 3. Lancer la build APK
+npx eas build -p android --profile apk
 ```
 
-**Emplacement** : `mobile/android-app/build/outputs/apk/`
+**Alternative plus rapide - APK de développement :**
+
+```bash
+cd mobile
+npx expo start
+```
+
+Puis scannez le QR code avec l'application Expo Go sur votre téléphone.
+
+**Emplacement après build** : Lien de téléchargement envoyé par email Expo
 
 ---
 
@@ -279,11 +292,11 @@ npx expo build:android -t apk
 
 - [x] MCD
 - [x] Scénarios documentés
-- [x] Lien GIT (à créer si besoin)
+- [x] Lien GIT : https://github.com/priscihantarisoa-hub/garage-management
 - [x] ZIP avec sources (sans lib)
 - [x] Instructions Docker
 - [x] Collection Postman
-- [ ] Todo list affectée
+- [x] Todo list affectée
 - [ ] APK généré
 
 ---
